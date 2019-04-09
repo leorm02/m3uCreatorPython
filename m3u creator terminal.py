@@ -15,35 +15,33 @@ def createPlayList(fileList,path):
 	fi.write("#EXTM3U\n")
 	#declaring music format to research
 	mFormat = ["aac","m4a","wav","mp3","flac","wma"]
-	for fiNames in fileList:
+	for fiName in fileList:
 		#checking if extension is in the list of format
-		fiName= path+"\\" +fiNames
+		fiPath= path+"\\" +fiName
 		ext = fiName.split('.')[-1]
 		if ext in mFormat:
 			try:
+				#setting flag state true
 				musicCheck = "true"
-				song = TinyTag.get(fiName)
-
+				#getting song name
+				song = TinyTag.get(fiPath)
+				#getting song artist
 				artist = str(song.artist)
-
+				#getting song duration
 				time = str(int(song.duration))
-
+				#getting song title
 				title = str(song.title)
-
-				#writing data
-				
-				fi.write("#EXTINF:"+time+","+artist+" - "+title+"\n")
-				fi.write(fiName+"\n")
+				#writing data on file
+				fi.write("#EXTINF:"+time+","+artist+" - "+title+"\n + fiName+"\n)
 			except Exception as e:
-				print("unable to add " + fiNames)
-			
-			
+				print("unable to add " + fiName)	
+	#file stream closing
 	fi.close()
-	#if there isn't music delete playlist
+	#if there isn't music delete playlist file
 	if musicCheck == "false":
 		os.remove(m3uName)
 
-def list_file(startpath):
+def createPlaylist(startpath):
 	for path,dirName,fiList in os.walk(startpath):
 		createPlayList(fiList,str(path))
 		print("DONE")
@@ -53,6 +51,6 @@ if message == "0":
 	cDirPhat = str(os.getcwd())
 else:
 	cDirPhat = str(input("inserisci il percorso: "))
-list_file(cDirPhat)
+createPlaylist(cDirPhat)
 
 
