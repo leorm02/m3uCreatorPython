@@ -1,5 +1,6 @@
 import os
 from tinytag import TinyTag 
+import argparse
 
 
 def createPlayList(fileList,path):
@@ -15,42 +16,47 @@ def createPlayList(fileList,path):
 	fi.write("#EXTM3U\n")
 	#declaring music format to research
 	mFormat = ["aac","m4a","wav","mp3","flac","wma"]
-	for fiName in fileList:
+	for fiNames in fileList:
 		#checking if extension is in the list of format
-		fiPath= path+"\\" +fiName
+		fiName= path+"\\" +fiNames
 		ext = fiName.split('.')[-1]
 		if ext in mFormat:
 			try:
-				#setting flag state true
 				musicCheck = "true"
-				#getting song name
-				song = TinyTag.get(fiPath)
-				#getting song artist
+				song = TinyTag.get(fiName)
+
 				artist = str(song.artist)
-				#getting song duration
+
 				time = str(int(song.duration))
-				#getting song title
+
 				title = str(song.title)
-				#writing data on file
-				fi.write("#EXTINF:"+time+","+artist+" - "+title+"\n + fiName+"\n)
+
+				#writing data
+				
+				fi.write("#EXTINF:"+time+","+artist+" - "+title+"\n")
+				fi.write(fiName+"\n")
 			except Exception as e:
-				print("unable to add " + fiName)	
-	#file stream closing
+				print("unable to add " + fiNames)
+			
+			
 	fi.close()
-	#if there isn't music delete playlist file
+	#if there isn't music delete playlist
 	if musicCheck == "false":
 		os.remove(m3uName)
 
-def createPlaylist(startpath):
+def list_file(startpath):
 	for path,dirName,fiList in os.walk(startpath):
 		createPlayList(fiList,str(path))
-		print("DONE")
-		
-message = input('Inserisci "0" per creare le playlist in tutte le sottocartelle a partire dalla posizione di questo programma,\n Inserisci "1" per inserire un altro percorso:')
-if message == "0":
-	cDirPhat = str(os.getcwd())
+	print("DONE")
+
+parser = argparse.ArgumentParser(description="Crea Playlist in tutte le sottocartelle del percorso dato")
+parser.add_argument("-p","--path", type=str, help="Percorso di partenza per creazione playlist")
+args = parser.parse_args()
+path = str(args.path)
+if path == "None":
+	print('Inserisci il percorso con -p "percorso" o --path "percorso"')
 else:
-	cDirPhat = str(input("inserisci il percorso: "))
-createPlaylist(cDirPhat)
+	list_file(path)
+
 
 
